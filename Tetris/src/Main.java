@@ -1,77 +1,121 @@
-import java.awt.Robot;
-import java.awt.AWTException;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.Scanner;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import javax.swing.JFrame;
 
 public class Main {
-    public static int piecey = 0;
-    public static int piecex = 0;
+    private static int piecey = 0;
+    private static int piecex = 0;
 
-    public static void main(String[] args) {
-        int width = 580; //10 wide | one piece block = 58
-        int height = 940; //20 tall | 47 one piece block
+    public class TetrisGame extends JFrame implements KeyListener {
+        private boolean leftPressed = false;
+        private boolean rightPressed = false;
+        private boolean downPressed = false;
+        private boolean rotatePressed = false;
 
-        Tetris_Pieces tetrisPieces = new Tetris_Pieces();
+        public void TetrisGame() {
 
-        DrawingPanel panel = new DrawingPanel(width, height);
-        Graphics g = panel.getGraphics();
+        }
 
-        panel.setBackground(Color.BLACK);
+        @Override
+        public void keyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    leftPressed = true;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    rightPressed = true;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    downPressed = true;
+                    break;
+                case KeyEvent.VK_UP:
+                    rotatePressed = true;
+                    break;
+            }
+        }
 
-        do {
-            Create_Piece(piecex, piecey,58, 47, g, "rectangle");
+        @Override
+        public void keyReleased(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    leftPressed = false;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    rightPressed = false;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    downPressed = false;
+                    break;
+                case KeyEvent.VK_UP:
+                    rotatePressed = false;
+                    break;
+            }
+        }
 
-            wait(1000);
+        @Override
+        public void keyTyped(KeyEvent e) {
 
-            Clear_Piece(piecex, piecey,58, 47, g, "rectangle");
+        }
 
-            piecey += 47;
+        public void startGame(){
+            int width = 580; //10 wide | one piece block = 58
+            int height = 940; //20 tall | 47 one piece block
 
-        } while (true);
-    }
+            Tetris_Pieces tetrisPieces = new Tetris_Pieces();
 
-    public void KeyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
+            DrawingPanel panel = new DrawingPanel(width, height);
+            Graphics g = panel.getGraphics();
 
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT:
-                piecex -= 58;
-                break;
-            case KeyEvent.VK_RIGHT:
-                piecex += 58;
-                break;
-            case KeyEvent.VK_DOWN:
-                piecey -= 47;
-                break;
+            panel.setBackground(Color.BLACK);
+
+            do {
+                if (leftPressed) {
+                    piecex -= 58;
+                }
+                if (rightPressed) {
+                    piecex += 58;
+                }
+                if (downPressed) {
+                    piecey -= 47;
+                }
+                if (rotatePressed) {
+                    piecex -= 58;
+                }
+
+                Create_Piece(piecex, piecey,58, 47, g, "rectangle");
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Clear_Piece(piecex, piecey,58, 47, g, "rectangle");
+
+                piecey += 47;
+
+            } while (true);
+        }
+
+        public void main(String[] args) {
+            TetrisGame game = new TetrisGame();
+            game.startGame();
         }
     }
 
-    public static void wait(int ms)
-    {
-        try
-        {
-            Thread.sleep(ms);
-        }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
-    }
 
-    static public void Create_Piece(int x, int y, int width, int height, Graphics g, String piece_name) {
+
+    static public void Create_Piece(int x, int y, int width, int
+height, Graphics g, String piece_name) {
         if (piece_name == "rectangle") {
             g.setColor(Color.BLUE);
             g.fillRect(x,y,width,height);
         }
     }
 
-    static public void Clear_Piece(int x, int y, int width, int height, Graphics g, String piece_name) {
+    static public void Clear_Piece(int x, int y, int width, int
+height, Graphics g, String piece_name) {
         if (piece_name == "rectangle") {
             g.setColor(Color.BLACK);
             g.fillRect(x,y,width,height);
