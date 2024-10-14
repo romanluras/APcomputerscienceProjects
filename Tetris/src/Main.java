@@ -13,7 +13,7 @@ public class Main {
         private boolean downPressed = false;
         private boolean rotatePressed = false;
 
-        public void TetrisGame() {
+        public TetrisGame() {
 
         }
 
